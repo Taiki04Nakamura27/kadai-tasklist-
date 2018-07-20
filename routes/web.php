@@ -10,8 +10,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', 'TasksController@index');
-
 Route::resource('tasks', 'TasksController');
+
 // 複写機能（ボタン）
-Route::get('tasks/{id}/copy', 'TasksController@copy');
+
+Route::get('/', function () {
+    return view('welcome');
+});
