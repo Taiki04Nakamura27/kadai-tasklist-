@@ -1,5 +1,7 @@
 @if (count($errors) > 0)
-    @foreach ($errors->all() as $error)
-        <div class="alert alert-warning">{{ $error }}</div>
-    @endforeach
+    <ul>
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
 @endif
