@@ -17,6 +17,6 @@ class Controller extends BaseController
         return [
             'count_tasks' => $count_tasks,
         ];
+    
     }
-
 }
