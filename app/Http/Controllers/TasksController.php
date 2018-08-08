@@ -34,10 +34,11 @@ class TasksController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+        @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
+    {   
         $task = new Task;
 
         return view('tasks.create', [
@@ -63,7 +64,7 @@ class TasksController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->back();
+        return redirect('/tasks/');
     }
 
 
@@ -75,11 +76,20 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        $task = Task::find($id);
+        // id をもとにMicropostを取得
+        $task = \App\Task::find($id);
 
-        return view('tasks.show', [
-            'task' => $task,
-        ]);
+        // 自分（ログインユーザー）のidとMicropostのuser_idが一致する場合のみ詳細を表示。
+        if (\Auth::id() === $task->user_id) {
+        
+                return view('tasks.show', [
+                    'task' => $task,
+                ]);
+                
+        }
+        else{
+            return redirect('/');
+        }
     }
 
     /**
@@ -89,12 +99,17 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
+    {   
+    $task = \App\Task::find($id);
+
+        if (\Auth::id() === $task->user_id) {
+            
        $task = Task::find($id);
 
         return view('tasks.edit', [
             'task' => $task,
         ]);
+    }
     }
 
     /**
@@ -106,7 +121,10 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
-         $this->validate($request, [
+        $task = \App\Task::find($id);
+
+        if (\Auth::id() === $task->user_id) {
+        $this->validate($request, [
             'content' => 'required|max:191',
         ]);
         
@@ -114,7 +132,8 @@ class TasksController extends Controller
         $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
-
+        }
+        
         return redirect('/tasks/');
     }
 
@@ -126,12 +145,15 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
+        // id をもとにMicropostを取得
         $task = \App\Task::find($id);
 
+        // 自分（ログインユーザー）のidとMicropostのuser_idが一致する場合のみ削除
         if (\Auth::id() === $task->user_id) {
             $task->delete();
         }
 
-        return redirect()->back();
+        // 元のページにリダイレクト
+        return redirect('/tasks/');
     }
 }
